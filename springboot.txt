@@ -1,0 +1,91 @@
+第3章 
+
+
+@Controller  //声明该类为controller，会返回一个ModelAndView实例
+public class HelloSpringBootController {
+    @RequestMapping(value="/", method=RequestMethod.GET)
+    public ModelAndView index(ModelAndView mv) {
+        mv.setViewName("index"); //视图名称是视图的标识，做视图解析
+        return mv;
+    }
+}
+
+@RequestMapping指定跳转的地址，以及请求的方式
+通过编写注释@RequestMapping，它可以用于类和方法。 当用于类时，该值集充当父路径。 
+在这种情况下，默认情况下该方法将映射到父路径的请求。 
+当用于方法时，可以设置父路径的相对路径和绝对路径。
+
+ModelAndView的第一种用法，先创建ModelAndView对象，再通过它的方法去设置数据与转发的视图名
+setViewName(String viewName)：ModelAndView实例视图名
+addObject(String attributeName, Object attributeValue)：通过key/value的方式绑定数据
+
+public ModelAndView hello() {
+       ModelAndView modelAndView = new ModelAndView();
+       modelAndView.setViewName("hello");
+       modelAndView.addObject("message", "Hello World");
+    return modelAndView;
+ }
+
+
+ModelAndView的第二种方法，可以直接通过带有参数的构造方法 ModelAndView(String viewName, String attributeName, Object attributeValue) 来返回数据与转发的
+public ModelAndView m07() {
+        return new ModelAndView("hello", "message", "Hello World");
+    }
+
+@RequestMapping(value="/result", method=RequestMethod.POST)
+    public ModelAndView send(@RequestParam("inputvalue") String inputvalue, ModelAndView mv) {
+        mv.setViewName("result");
+        mv.addObject("message", inputvalue);
+        return mv;
+    }
+
+@RequestParam可以接收URL中包含的查询参数和消息正文中包含的post参数。
+
+@RequestMapping("/accounts/show") 
+public void show(@RequestParam("number") String number, Map<String, Object> model) { 
+    model.put("account", accountRepository.findAccount(number)); 
+} 
+这里@RequestParam注解可以用来提取名为“number”的String类型的参数，并将之作为输入参数传入。 @RequestParam支持类型转换，还有必需和可选参数
+
+@RequestMapping(headers={"Accept=application/*","Content-Type=text/*"}) 
+匹配到value的url才调用该方法，如果@RequestMapping中只显示value的值的话，value=可省略
+
+@RequestMapping注解提供以下几个属性：
+
+         name：用于指定映射器名称
+
+         value：用于指定映射路径，同path
+
+         path：用于指定映射路径，同value
+
+         method:用于指定请求类型：GET, POST, HEAD, OPTIONS, PUT, PATCH, DELETE, TRACE
+
+         params：指定请求的参数
+
+         headers：指定请求头部，源码示例：RequestMapping(value = "/something", headers = "content-type=text/*")
+
+         consumes：指定处理请求提交的内容类型（Content-Type），例如application/json, text/html，只有在Content-Type匹配这些媒体类型之一时才会映射请求
+
+         produces：指定请求返回的内容类型 例如：produces = "application/json; charset=UTF-8"
+
+//示例2 ：处理多个url映射
+    @RequestMapping({"info","index"})
+3.Ant风格的URL路径映射
+
+ Ant风格通配符如下：
+
+?  匹配一个字符
+*    匹配路径段中的零个或多个字符
+**  匹配零个或多个路径段
+
+// 示例5 params 限定参数包含orderNumber
+    @RequestMapping(value = "detail2", params = "orderNumber")
+   // 示例6 params 限定参数值
+    @RequestMapping(value = "detail3", params = "orderNumber!=1222")
+
+
+ produces属性用于设定返回内容类型，并且满足以下条件：接受请求header中包含Accept的值与produces设定的值相同，或者接受的请求使用不显示设置accept值
+示例8 表示返回内容格式application/json ，当客户端设置的accept格式为text/json时，运行报错,Http status 406
+当客户端设置的accept格式为application/json或者不设置accept值时，可以正常运行
+
+

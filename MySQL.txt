@@ -1,0 +1,171 @@
+第2章
+CREATE TABLE `new_schema1`.`社員一覧` (
+`社員番号` VARCHAR(8) NOT NULL,
+`氏名` VARCHAR(100) NOT NULL,
+`所属部署` VARCHAR(100) NOT NULL,
+PRIMARY KEY (`社員番号`),
+UNIQUE INDEX `社員番号_UNIQUE` (`社員番号` ASC)
+)
+COMMENT = 'test table';
+
+
+`section` varchar(8) NOT NULL,
+`answer` varchar(100) NOT NULL
+
+
+创建db  []内は必須ではないオプションです。
+CREATE DATABASE　データベース名 　[CHARACTER SET = 　文字コード名,　 COLLATION = COLLATION名] ;
+
+删除db
+DROP DATABASE データベース名;
+
+获取当前db一览
+SHOW DATABASES;
+
+将指定的数据库用于多个数据库时，必须标识该数据库。USE データベース名;当想在该db下建表时，就要先指定该db
+
+创建表格时列的选项定义
+primary key 主键
+key 可保存重复的值
+fulltext 用于全文检索的特殊的索引FULLTEXT(title, body)
+AUTO_INCREMENT 自增，插入记录后，将自动使用序列号生成相应的列。 id MEDIUMINT NOT NULL AUTO_INCREMENT,
+
+显示当前db的数据表一览show tables;
+删除表DROP TABLE テーブル名;
+追加列
+ALTER TABLE テーブル名 ADD ( 列名 (列名列の型[制約],…) ) ;
+删除列
+ALTER TABLE テーブル名 DROP 列名;
+修改列名
+ALTER TABLE テーブル名 CHANGE　元カラム名　新アラム名(列の型);
+
+第5章
+插入数据
+INSERT INTO データベース名.テーブル名(列名1, 列名2, ...) VALUES (値1, 値2, ...);
+如果之前先用use db名；则该处的db名可省略，如果是为所有的字段都增加值，列明可省略
+
+一次insert插入多条数据，用values的方法
+insert into tableName (列名1,列名2,列名3,列名4)   select 值1，值2，值3，值4，
+
+       union all select 值1，值2，值3，值4
+insert into tableName (列名1,列名2,列名3,列名4) values (值1，值2， 值3， 值4)，(值1，值2， 值3， 值4)......
+
+where条件语句
+between SELECT … FROM テーブル名 WHERE 列名 BETWEEN 値1 AND 値2
+
+IN IN条件比较一个值是否在指定的值列表中。
+SELECT … FROM テーブル名 WHERE 列名 IN(値1,値2)
+
+LIKE %は「任意の文字数の任意の文字」、_は「1文字の任意の文字」を表します。
+SELECT … FROM テーブル名 WHERE 列名 LIKE 検索条件
+
+表连接
+内连接  内部联接使用INNER JOIN语句仅检索与每个表的指定列中的值匹配的数据。
+SELECT テーブル名.カラム名, ... FROM テーブル名1 INNER JOIN テーブル名2 ON テーブル名1.カラム名1 = テーブル名2.カラム名2;
+
+内联条件时，如果两个表的比较的列名相同，用using,检索结果只会显示一次条件列名且显示在第一列，比用on少显示一次
+SELECT * FROM テーブル１ INNER JOIN テーブル２ USING ( 列名 );
+检索结果里显示匹配上的内容
+
+cross join  SELECT * FROM テーブル１ CROSS JOIN テーブル２;
+交叉联接是创建两个表组合的所有组合的联接。 使用CROSS JOIN语句，结果显示条数为两个表的原始条数的乘积
+
+
+外部联接是除每个表的指定列值匹配的数据之外仅存在于其中一个表中的数据。 也得到解决。
+左外链接，除共同部分外，还会输出table1的记录
+SELECT テーブル名.カラム名, ... FROM テーブル名1LEFT OUTER JOIN テーブル名2 ON テーブル名1.カラム名1 = テーブル名2.カラム名2;
+右外链接，除共同部分外，还会输出table2的记录
+SELECT テーブル名.カラム名, ... FROM テーブル名1RIGHT OUTER JOIN テーブル名2 ON テーブル名1.カラム名1 = テーブル名2.カラム名2
+
+多表连接3个
+SELECT empCD,name,countryCD,countryName,sex.sexName FROM empinfo INNER JOIN country USING (countryCD)
+INNER JOIN sex USING (sexCD);
+
+
+表中数据更新
+UPDATE テーブル名　SET 列名1 = 値1,列名2 = 値2,… WHERE [条件];
+
+
+
+第7章 
+利用jdbc把java与mysql相连，来操作数据库
+public class TestMySQl {
+	//JDBCライブラリを導入
+
+	public static void main(String[] args) {
+		Connection con = null;//リンク変数生成
+		String user = "root";//MySQLのユーザ名を記入
+		String password = "root";//MySQLのパスワードを記入
+		String url = "jdbc:mysql://localhost:3306/companydata?serverTimezone=JST";//データベースパス記入
+		try {
+		con = DriverManager.getConnection(url, user, password);//リンクインスタンス生成
+		String createtable = "insert into empinfo(empCd,name,birthday,countryCd,sexCd,year) "
+		+ "values (\"100031\",\"ドラDもん\",\"2019-04-24\",\"011\",\"03\",0);";　 // \表示转义
+		PreparedStatement prepStmt1 = con.prepareStatement(createtable);  // 预编译sql语句
+		prepStmt1.execute();
+
+
+		如果想使用sql执行后的结果使用ResultSet类
+		ResultSet rs = prepStmt1.execute();
+		while（rs.next(){
+		system.out.println(rs.getstring("字段名"));//数据以string类型输出
+}
+
+
+
+		con.close();//リンクを閉じる，切断与db的链接
+		} catch (SQLException e) {
+		    e.printStackTrace();
+		    }
+		}
+
+}
+
+
+
+
+
+
+ResultSet
+
+
+メソッド	機能
+boolean first()	現在の参照行を先頭に移動
+boolean next()	現在の参照行を1行下に移動
+boolean previous()	現在の参照行を1行上に移動
+boolean last()	現在の参照行を最終行に移動
+String getString(String columnName)	現在行から列名に指定した列の値を取得
+int getInt(String columnName)	現在行から列名に指定した列の値を取得
+double getDouble(String columnName)	現在行から列名に指定した列の値を取得
+boolean getBoolean(String columnName)	現在行から列名に指定した列の値を取得
+Date getDate(String columnName)	現在行から列名に指定した列の値を取得
+
+
+
+prepareStatement 通过set类型的方法 改变sql文的语句值，原语句中可以用？代替
+
+
+//SQL文の用意
+String selectStatement = "SELECT * from empinfo where empCd = ?";
+//PreparedStatementのインスタンスを作成
+PreparedStatement prepStmt = con.prepareStatement(selectStatement);
+//用意されたSQL文中の？に値を代入します。ここでは左から第１番目の？に”100011”を代入します。複数個？を設定することもできます。
+prepStmt.setString(1,"100011");
+
+//SQL文実行
+ResultSet rs = prepStmt.executeQuery();
+
+メソッド	説明
+void setString(int parameterIndex, String x)	String 値に設定します。
+void setInt(int parameterIndex, int x)	int 値に設定します。
+void setLong(int parameterIndex, long x)	long 値に設定します。
+void setByte(int parameterIndex, byte x)	バイト配列に設定します。
+void setFloat(int parameterIndex, float x)	float 値に設定します。
+void setDouble(int parameterIndex, double x)	double 値に設定します。
+void setDate(int parameterIndex, Date x)	java.sql.Date 値に設定します。
+void setTime(int parameterIndex, Time x)	java.sql.Time 値に設定します。
+void setBoolean(int parameterIndex, boolean x)	boolean 値に設定します。
+void setTimestamp(int parameterIndex, Timestamp x)	java.sql.Timestamp 値に設定します。
+
+
+除了查询外，当对表格进行增删改时，需执行prepStmt.executeUpdate();

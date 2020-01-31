@@ -1,0 +1,459 @@
+第1章
+JSP将Java代码嵌入HTML页面，不需要编译，也不需要xml文件，编写方式与html一样，其中java代码部分用<% %>括起来
+
+分類	タグ	説明
+コメント	<%-- comment --%>	HTMLには出力されないJSPコメント
+スクリプトレット	<% scriptlet %>	Java言語の埋め込み
+式	<%= expression %>	値の表示
+宣言	<%! declaration %>	宣言文
+ディレクティブ	<%@ include %>	更に読み込み
+<%@ page %>	ページ設定
+<%@ taglib %>	独自タグ設定
+アクション	< jsp:include >	更に読み込み
+< jsp:useBean >	JavaBeansの利用設定
+< jsp:getProperty >	JavaBeansのプロパティの値取得・表示
+< jsp:setProperty >	JavaBeansのプロパティの値設定
+< jsp:plugin >	Java Plug-inによる表示（アプレット）
+< jsp:forward >	別のページに転送 (Forward) 分類 タグ 説明
+
+
+page指令  
+<%@ ディレクティブ名 属性名1="値1" 属性名2="値2" ... %>
+include指令 <%@ include file="relativeURL" %> 可读取其他的html和jsp文件
+<%@ include file="IncludeData_disp1.jsp" %>
+
+
+第3章 脚本即java语言
+<%! 変数や定数の宣言%> 变量常量声明方法
+<body>
+    <h1>カウント</h1>
+    <%! int count = 0;%>
+
+变量输出在页面方法   変数宣言で作成したカウントは<%=count%>です。
+
+用HTML注释的写法  <!-- JSPのテストページです -->
+用JSP注释的写法
+<!-- JSPのテストページです -->
+    <h1>Hello World!</h1>
+    <%-- 日付を出力します --%>
+    <%
+    out.println(new java.util.Date());
+    %>
+用java注释的写法
+ <%
+    // java.util.Dataを使います
+    out.println(new java.util.Date());
+    %>
+
+第4章 动作标签 标签有标准
+<jsp:アクション名 属性名1=属性値1 属性名2=属性値2 ... >
+jsp是前缀，指定使用哪个标签库，动作名是为了在标签一览中识别执行哪个java代码
+
+forward动作，语句写在html标签前，在该jsp文件中执行后显示的内容为跳转后页面执行的内容
+<jsp:forward page="転送先のページ" />
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<jsp:forward page="forwardTo.jsp" />
+<html>
+
+param动作，
+通常与forward动作连用，给跳转目的页面传送参数，目的页面通过请求的「getParameter」又は「getParameterValues」来获取参数使用
+<jsp:forward page="転送先のページ">
+<jsp:param name="パラメータ名1" value="値1" />
+<jsp:param name="パラメータ名2" value="値2" />
+</jsp:forward>
+
+String val = request.getParameter("paramName");
+
+
+include动作，读取page后指定的页面，flush可省略，默认为false，
+当指定为true时，当被读取页面发生变化时，该页面也会发生变化，且可在服务器端的缓冲段先生成全部或部分html，再向客户端输出，
+不会像false读一句传一句，即使缓存溢出也会被强制输出，不会发生错误
+<jsp:include page="インクルードするページ" flush="true | false" />
+
+include指令与include动作标志的区别
+include指令是直接读取被包含文件的代码，与包含文件合成一个，进行编译
+include动作标识，是各自编译，被包含文件执行完成后，还会返回至包含文件继续执行之后的语句
+
+
+include+param动作标识
+源文件
+<jsp:include page="インクルードするページ">
+<jsp:param name="パラメータ名1" value="値1" />    param只能是单标签
+<jsp:param name="パラメータ名2" value="値2" />
+</jsp:include>
+被包含文件
+<%
+  String textsize = request.getParameter("name");
+%>
+
+plugin动作  在jsp页面显示java小程序
+<jsp:plugin
+  type="タイプ"    applet
+  code="クラス名" 
+  codebase="コードベース"  小程序的绝对路径
+  jreversion="JREバージョン"
+  width="幅"
+  height="高さ">
+</jsp:plugin>
+
+第5章 隐含对象  无需声明就可在jsp中使用
+
+オブジェクト名	説明	类型
+request	クライアントからのリクエストを取得する	javax.servlet.http.HttpServletRequest   可以获取客户端传送过来的参数，cookie等
+response	クライアントへのレスポンスを設定する	javax.servlet.http.HttpServletResponse
+out	JSPの実行結果をクライアントへの出力する	javax.servlet.jsp.JspWriter
+pageContext	JSPのオブジェクトを管理する	javax.servlet.ServeletContext　　　pageContext.setAttribute("name1", name1, PageContext.REQUEST_SCOPE);可获得属性
+session	セッション情報を管理する	javax.servlet.http.HttpSession　　　　　　　　　　　　　　　　　　page指令session为false时，该对象不可使用
+application	アプリケーションデータを管理する	javax.servlet.ServeletContext
+page	JSPページ自身を表す。「this」と同じ	java.lang.Object
+config	JSPページのパラメータを設定する	javax.servlet.ServletConfig
+exception	例外発生時のエラー情報を取得する	java.lang.Throwable
+
+out.println(request.getParameter("type"));
+获取名为type的单个值
+String[] strAry = request.getParameterValues("hobby");
+获取参数名 为hobby的一组值
+利用上下文内置对象设置属性，在REQUEST_SCOP范围
+pageContext.setAttribute("name1", name1, 
+　PageContext.REQUEST_SCOPE);
+有include，forward方法
+pageContext.forward("exPageContext2.jsp");
+
+获取session值session.getAttribute("id") + " Nice to meet you.");
+session如果在page的指令中设置为false，则该内置对象不可使用
+
+config该对象用于获取每个Servlet程序和JSP程序的初始化参数。但是不能获取别的程序的初始值，
+ out.println(config.getInitParameter("name"));
+如果上下文想要共享初始值时使用暗黙オブジェクトapplication
+<p>ID :</p>
+　<%
+　　out.println(application.getInitParameter("id"));
+　%>
+需要在xml文件里配置
+<servlet>
+    <servlet-name>Config</servlet-name>
+    <jsp-file>/exConfig.jsp</jsp-file>
+    <init-param>
+        <param-name>name</param-name>
+        <param-value>java</param-value>
+    </init-param>
+</servlet>
+<servlet-mapping>
+    <servlet-name>Config</servlet-name>
+    <url-pattern>/exConfig.jsp</url-pattern>
+</servlet-mapping>
+
+
+<context-param>
+        <param-name>id</param-name>
+        <param-value>java-id</param-value>
+</context-param>
+<context-param>
+        <param-name>pass</param-name>
+        <param-value>java-pass</param-value>
+</context-param>
+
+第6章 server与浏览器的数据的交互
+获取请求参数的值
+String username;
+username = request.getParameter("user");
+
+利用cookie来传送值
+先获取cookie和请求的值，判断请求值是否与cookie中的值相等，如果相等，传cookie中的值
+如果cookie中没有值与之相等则创建新cookie并保存
+
+
+   Cookie cookies[] = request.getCookies();
+   String name = null;
+   name = request.getParameter("name");
+   if (name == null && cookies != null) {
+     for (int i=0; i<cookies.length; i++) {
+       if (cookies[i].getName().equals("name")) {
+         name = cookies[i].getValue();
+       }
+     }
+   }
+   // クッキーの保存
+   if (name != null) {
+     Cookie newCookie = new Cookie("name", name);
+newCookie.setMaxAge(1000);
+response.addCookie(newCookie);
+   }
+%>
+
+第7章 在jsp中利用class
+JavaBeans  主要是管理数据，被称作属性
+
+新建javabeans   .java文件
+1，class名以Bean结尾，并且是public类
+2，定义的属性需要是private的，需要有一个无参的构造函数
+3，需要设置set属性名（）和get属性名的方法，属性名的第一个字母需要大写
+
+ package Beans;
+  public class ExBean {
+    private String id;
+    public void setId(String id) {
+      this.id = id; 
+    }
+    public String getId() {
+     return this.id; 
+    }
+  }
+
+在jsp中使用bean，有三个tag
+
+<jsp:useBean id="オブジェクト変数"  指定存储JavaBeans对象的对象变量。通过为id指定相同的对象变量，可以在不同页面上共享相同的JavaBeans对象。 必填属性。
+　　　　　　　　　 scope="スコープ"   指定对象的有效范围，默认page。一共有4种"page"、"request"、"session"、"application"
+　　　　　　　　　 class="クラス"     当没有对象时，指定的class会生成class对象，如果有包的话需要写成包名.类名
+　　　　　　　　　 type="オブジェクト変数の型"  指定id的类型，如果省略默认为与class属性一致
+　　　　　　　　　 beanName="クラス" /> 指定序列化对象（序列化对象是存储在文件等中的用于对象持久化的对象。）当没有对象时，生成对象。与class不能同时使用
+
+<jsp:setProperty name="オブジェクト変数"
+　　　　　　　　　　　 property="プロパティ"  bean中的属性名
+　　　　　　　　　　　 value="プロパティ値"
+　　　　　　　　　　　 param="パラメータ" />
+
+<jsp:getProperty name="オブジェクト変数"
+　　　　　　　　　　　 property="プロパティ" />
+
+
+
+<%@page contentType="text/html; charset=UTF-8"%>
+<%@ page import="beans.*"%>
+<jsp:useBean id="object1" class="beans.ExBean" scope="session" />
+<html
+<body>
+    <jsp:setProperty name="object1" property="id" value="java" />
+    あなたの名前は
+    <jsp:getProperty name="object1" property="id" />
+    です。
+</body>
+
+
+第8章  jsp和servlet的相互作用
+在jsp使用servlet
+1，可以用include和forward方法，区别于servlet与servlert之间的相互作用一样
+<jsp:include page="/servlet/MyServlet" flush="true" />
+<jsp:forward page="/servlet/MyServlet" />
+在此基础上可传送参数
+<jsp:include page="/servlet/MyServlet" flush="true" >
+<jsp:param name="username" value="Smith" />
+<jsp:param name="userempno" value="9876" />
+</jsp:include>
+
+在servlet使用jsp
+1，用servlet实例获取servlet上下文实例
+ServletContext sc = this.getServletContext();
+2，用servlet上下文实例获取RequestDispatcher实例 并指定使用的jsp文件的地址
+RequestDispatcher rd = sc.getRequestDispatcher("/jsp/mypage.jsp");5
+3，可调用include，forward方法
+rd.include(request, response);
+rd.forward(request, response);
+在此基础上传送数据
+RequestDispatcher rd =
+sc.getRequestDispatcher("/jsp/mypage.jsp?username=Smith");
+加上？，后面加上设置的变量名和值，
+
+利用内置对象设置属性，并指定是哪个文件
+request.setAttribute("username", "Smith");
+RequestDispatcherrd = sc.getRequestDispatcher("/jsp/mypage.jsp");
+
+接受者使用getAttribute()メソッド就能利用该参数以及值
+
+第9章forward，redirect
+
+forward页面显示的网址不变
+forward先如果是jsp文件的话路径从/WebContent开始
+如果是servlet的话，就是网址格式
+RequestDispatcher dispatcher = request.getRequestDispatcher("フォワード先のパス");
+dispatcher.forward(request,response);
+
+jsp文件的配置和请求
+按以下的配置，jsp文件无法直接从浏览器请求，由servlet调出再返回浏览器
+/WebContent
+
+      |___ /jsp
+             |___この中にフォワードするjspを配置しとく
+
+redirect重定向。从server响应消息：调用某个文件，接收到该信息的浏览器就会再次向该新文件发送请求
+response.sendRedirect("リダイレクト先のURL");
+サーブレットの場合 →　/アプリケーション名/URLパターン
+JSPファイルの場合 →　/アプリケーション名/WebContentからのパス
+
+画面间数据的传输，有四个范围
+1，page  1个页面
+2，request  客户端请求，服务端响应。forward之后仍然生效，redirect后失效
+3，session  实例被删除或者浏览器被关闭该数据失效。但是只是重定向的话还可继续利用
+4，application  server再启动为止，数据可利用
+
+servlet内的实例保存以及取出
+protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws ServletException, IOException{
+        //リクエストスコープへ保存するインスタンス生成
+        Human human = new Human("かずきち", 29);
+        //リクエストスコープにインスタンス保存
+        request.setAttribute("human",human); //第一引数は「属性名」、第二引数はインスタンス
+        //リクエストスコープからインスタンス取得
+        human h = (Human) request.getAttribute("human"); //取得したインスタンスはObject型になっているので元の型へキャスト（型変換）する必要があります。
+
+jsp内取出实例
+request范围
+<%@ page import = "bean.Human" %> //取得したいインスタンスのクラスをインポートします
+<%
+//リクエストスコープからインスタンスを取得します
+Human h = (Human) request.getAttribute("human");
+%>
+<%= h.getName() %>さんの年齢は<%= h.getAge() %>歳です。 //インスタンスのプロパティにアクセスし、値を取り出します
+
+session范围
+Human human = new Human();
+human.setName("かずきち");
+human.setAge(29);
+//HttpSessionインスタンスの取得（javax.servlet.http.HttpSessionをインポートしておく必要があります）
+HttpSession session = request.getSession();
+//セッションスコープにインスタンスを保存
+session.setAttribute("human", human);
+//セッションスコープからインスタンスを取得
+Human h = (Human) session.getAttribute("human");
+//セッションスコープからインスタンスを削除
+session.removeAttribute("human");
+//セッションスコープ自体を削除したい場合
+session.invalidate(); //  所有的实例都会失效
+
+application范围，
+Human human = new Human("かずきち",29);
+//ServletContextインスタンスの取得
+ServletContext app = this.getServletContext(); //javax.servlet.http.ServletContextをインポートする必要がある
+//アプリケーションスコープにインスタンスを保存
+app.setAttriute("human", human);
+//アプリケーションスコープからインスタンスを取得
+Human　h = (Human) app.getAttribute("human");
+//アプリケーションスコープからインスタンスを削除
+app.removeAttribute("human");
+
+jsp文件的场合
+<%@ page import = "bean.Human" %>
+<%
+//アプリケーションスコープからインスタンスを取得
+Human h = (Human) app.getAttribute("human");
+%>
+<%= h.getName() %>さんの年齢は<%= getAge() %>際です
+
+第10章EL表达式，也称为表达式语言，用于输出运算结果和值引用。
+${式}
+三元运算
+${ itjob >= 100 ? "100以上" : "100より小さい"}
+
+演算子	キーワード	意味
++		加算
+-		減算
+/	div	除算
+%	mod	剰余（余り）
+==	eq	等しい
+!=	ne	等しくない
+<	lt	右辺よりも小さい
+>	gt	右辺よりも大きい
+<=	le	右辺以上
+>=	ge	右辺以下
+empty	nullもしくは空文字
+&&	and	積
+||	or	和
+!	not	否定
+式　?　式　:　式		三項演算子
+表达式里可以用运算符也可以用关键词
+
+${a >= b ? "1" : "2"}
+と
+
+${a ge b ? "1" : "2"}
+
+
+访问特定范围的对象
+<% request.setAttribute("itjob", "ITJOB"); %>
+${itjob}
+
+<% session.setAttribute("itjob", "ITJOB"); %>
+${itjob}
+或者明示
+${sessionScope.itjob }
+
+查找范围未指定时按以下顺序查找
+１ページ　→　２．リクエスト　→　３．セッション　→　４．アプリケーション
+
+
+内置对象
+オブジェクト	意味
+pageScope	pageスコープの値が取得できる
+使用例）${ pageScope.arg1}
+requestScope	requestスコープの値が取得できる
+使用例）${ requestScope.arg1}
+sessionScope	sessionスコープの値が取得できる
+使用例）${ sessionScope.arg1}
+applicationScope	aplicationスコープの値が取得できるapplicationScope
+使用例）${ applicationScope.arg1}
+pageContext	pageContextオブジェクト
+context、session、requestの各オブジェクトにアクセスできます。
+param	リクエストパラメータの値が取得できる
+使用例）${param.arg1}
+paramValues	リクエストパラメータの値が取得できる（配列で取得）
+使用例）${paramValue.arg[0]}
+header	リクエストヘッダの値が取得できる
+使用例）${header['user-agent']}
+headerValues	リクエストヘッダの値が取得できる（配列で取得）
+使用例）${headerValues['user-agent'][0]}
+initParam	初期パラメータの値が取得できる
+使用例）${initParam["param1"]}
+cookie	クッキーの値が取得できる
+使用例）${cookie["param1"].value}
+
+
+从对象，数组，list、map中取得嵌套的对象的值
+public class SampleJob {
+    private String itjobA;
+    private String itjobB;
+    ※ 以下setter, getter
+}
+
+
+SampleJob.jsp
+<%
+    SampleJob job = new SampleJob ();
+    job.setItjobA("AAA");
+    job.setItjobB("BBB");
+    pageContext.setAttribute("job", job);
+%>
+${job.itjobA }
+${job.itjobB }
+
+属性还可以用这种方法表示[""]
+${job["itjobA "] }
+${job["itjobB "] }
+
+数组和list
+<%
+    String[] array = new String[]{"A", "B", "C"};
+    pageContext.setAttribute("array", array);
+    java.util.List<String> list = new java.util.ArrayList<String>();
+    list.add("a");
+    list.add("b");
+    list.add("c");
+    pageContext.setAttribute("list", list);
+%>
+${array[1]}
+${list[2]}
+
+map
+<%
+    java.util.Map<String, String> map = new java.util.HashMap<String, String>();
+    map.put("itjobA", "AAA");
+    map.put("itjobB", "BBB");
+    pageContext.setAttribute("map", map);  
+%>
+${map.itjobA }
+${map["itjobB "]}
+
+取得的值是string型，但是如果是数值的string型，就可以计算
+<% pageContext.setAttribute("itjob", "100"); %>
+${ itjob + 100}

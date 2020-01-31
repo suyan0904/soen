@@ -1,0 +1,107 @@
+package com.softusing.emp.controller;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.validation.Valid;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.softusing.emp.bean.Country;
+import com.softusing.emp.bean.EmpInfo;
+import com.softusing.emp.bean.Sex;
+import com.softusing.emp.form.EmpInfoForm;
+import com.softusing.emp.service.CountryService;
+import com.softusing.emp.service.EmpinfoService;
+import com.softusing.emp.service.SexService;
+
+@Controller
+public class AddController {
+	@Resource
+	private EmpinfoService empinfoService;
+	@Resource
+	private SexService sexService;
+	@Resource
+	private CountryService countryService;
+
+	// 変更画面の表示
+	@RequestMapping(value = "/add", method = RequestMethod.POST)
+	public String addProc(@ModelAttribute("form") EmpInfoForm empInfoForm, Model model) {
+		List<Sex> sexList = sexService.selSex();
+		model.addAttribute("sexList", sexList);
+
+		List<Country> countryList = countryService.selCountry();
+		model.addAttribute("countryList", countryList);
+
+		// 画面遷移の指定
+		return ("/add");
+	}
+
+	// データ更新、一覧画面の表示
+	@RequestMapping(value = "/addconf", method = RequestMethod.POST)
+	public String addConfProc(@ModelAttribute("form") @Valid EmpInfoForm empInfoForm, BindingResult result,
+			Model model) {
+		String url = null;
+		String message = null;
+		EmpInfo empinfo = empinfoService.selectEmpinfo(empInfoForm.getEmpCd());
+		//
+		//		if (empinfo != null) {
+		//			List<ObjectError> errorList = result.getAllErrors();
+		//			// エラーメッセージを画面返却情報に入れる
+		//			model.addAttribute("errorList", errorList);
+		//
+		//			List<Sex> sexList = sexService.selSex();
+		//			model.addAttribute("sexList", sexList);
+		//
+		//			List<Country> countryList = countryService.selCountry();
+		//			model.addAttribute("countryList", countryList);
+		//			// 画面遷移の指定
+		//			url = "/add";
+		//		}
+		if (empInfoForm.getEmpCd().length() > 6) {
+			message = "社員番号の最大桁数は6位です！";
+			model.addAttribute("message", message);
+			List<Sex> sexList = sexService.selSex();
+			model.addAttribute("sexList", sexList);
+
+			List<Country> countryList = countryService.selCountry();
+			model.addAttribute("countryList", countryList);
+			url = "/add";
+		} else if (empinfo != null) {
+			message = "該当社員番号が存在しています！";
+			model.addAttribute("message", message);
+			List<Sex> sexList = sexService.selSex();
+			model.addAttribute("sexList", sexList);
+
+			List<Country> countryList = countryService.selCountry();
+			model.addAttribute("countryList", countryList);
+			url = "/add";
+		} else if (result.hasErrors()) {
+			List<ObjectError> errorList = result.getAllErrors();
+			// エラーメッセージを画面返却情報に入れる
+			model.addAttribute("errorList", errorList);
+
+			List<Sex> sexList = sexService.selSex();
+			model.addAttribute("sexList", sexList);
+
+			List<Country> countryList = countryService.selCountry();
+			model.addAttribute("countryList", countryList);
+			// 画面遷移の指定
+			url = "/add";
+		}
+
+		else {
+			empinfoService.insertEmpinfo(empInfoForm);
+			url = "redirect:/list";
+		}
+		return url;
+
+	}
+
+}

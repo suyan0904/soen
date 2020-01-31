@@ -1,0 +1,314 @@
+第2章
+
+servlet class的执行在class之前一定要写@WebServlet("/HelloWorld")HelloWorld为class名
+
+xml文件作成
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+   http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+  version="2.4">
+<servlet>
+<servlet-name>helloworld</servlet-name>    给相应的class命名servlet的名字
+<servlet-class>HelloWorld</servlet-class>  相应的class名
+</servlet>
+<servlet-mapping>
+<servlet-name>helloworld</servlet-name>    
+<url-pattern>/helloworld</url-pattern>    应用时使用的路径名
+</servlet-mapping>
+</web-app>
+
+第3章servlet基本
+doget方法的触发，URL请求即打开网页时，或者 form表单提交method以get方式
+dopost方法只在form表单提交时以method为post时触发
+建立缓冲区对象，最后再新建对象存储缓冲区内容并返回，以string的类型
+StringBuffer sb = new StringBuffer();
+return (new String(sb));
+
+init方法
+只在首次创建实例时执行。
+public class Sample extends HttpServlet {
+  public void init() throws ServletException{
+    /* 初期化処理 */
+  }
+
+destroy方法 在执行结束，销毁servlet实例
+ public void destroy(){
+    /* 終了処理 */
+  }
+第4章 HttpServletResponse向客户端输出
+设定回答 的内容类型
+setContentType
+
+種類	拡張子	Content-Type
+HTMLファイル	html, htm	text/html
+テキストファイル	txt	text/plain
+GIF	gif	image/gif
+PNG	png	image/png
+Windows 実行ファイル	exe	application/octet-stream
+
+
+字符集编码设定
+response.setContentType("text/html");
+response.setCharacterEncoding("UTF-8");
+
+设置输出流用对象
+PrintWriter out = response.getWriter();
+
+强制输出缓冲区内容
+public void flush()
+
+设置状态码
+public void setStatus(int sc)
+
+
+重定向  可以通过设置状态码和Location标头来传输URL，但是由于重定向方法是单独准备的，因此可以使用它将其传输到其他页面。
+在参数中指定重定向URL。
+public void sendRedirect(java.lang.String location)
+                  throws java.io.IOException
+
+第5章 HttpServletRequest 
+获取该参数名的值，如果对应很多个值，则取第一个
+  String val = request.getParameter("name");
+如果想获取所有的值则用getParameterValues
+public java.lang.String[] getParameterValues(java.lang.String name)
+
+把字符串转为字节public byte[] getBytes(String charsetName)
+    String val = request.getParameter("name");
+    try {
+      byte[] byteData = val.getBytes("ISO_8859_1");
+    }catch(UnsupportedEncodingException e){
+      System.out.println(e);
+
+
+将字节转为字符串
+public String(byte[] bytes, String charsetName)
+       throws UnsupportedEncodingException
+
+    String val = request.getParameter("name");
+    try {
+      byte[] byteData = val.getBytes("ISO_8859_1");
+      val = new String(byteData, "UTF-8");
+    }catch(UnsupportedEncodingException e){
+      System.out.println(e);
+
+
+设置请求体的读取编码，但只能对应post，或者get的请求体中的内容，但是如果是存在请求的url的内容的话无法解决乱码
+ request.setCharacterEncoding("Utf-8");
+
+获取所有参数名
+getParameterNames
+ Enumeration names = request.getParameterNames();
+    while (names.hasMoreElements()){
+      String name = (String)names.nextElement();
+
+获取请求页面的相对路径，您可以获取端口号和请求中包含的参数之间的部分
+public java.lang.String getRequestURI()
+
+
+request.getRequestURL(): http:localhost:8080/project/example 地址栏地址
+request.getRequestURI(): /project/example
+request.getContextPath(): /project
+request.getLocalAddr(): localhost
+request.getLocalPort(): 8080
+request.getServletPath(): /example  获取servlet名称
+
+获取元素初始值getInitParameter
+现在xml文件里设置<init-param>
+<web-app>
+<servlet>
+  <servlet-name>Sample</servlet-name>
+  <servlet-class>SampleServlet</servlet-class>
+  <init-param>
+    <param-name> url</param-name>
+    <param-value> jdbc:mysql://localhost/school</param-value>
+  </init-param>
+再利用init（）方法，获取设置的初始值
+public void init() throws ServletException {
+        url = getInitParameter("url");
+        username = getInitParameter("username");
+
+
+第6章 cookie
+新建 （name，value）
+Cookie cookie = new Cookie("visited", "1");
+把cookie存到浏览器中
+response.addCookie(cookie);
+
+获取从客户端送信的cookie，获取从客户端发送的所有Cookie，作为Cookie类对象的数组。 Cookie可以使用来自同一服务器的不同cookie名称存储在客户端上，因此从客户端发送的cookie数量不一定是一个。
+如果客户端上没有存储任何cookie，并且没有发送给服务器的cookie，则返回null
+public Cookie[] getCookies()
+
+从获取的cookie中，查找某一cookie，利用名字
+public java.lang.String getName()
+从获取的cookie中，取cookie值
+public java.lang.String getValue()
+对取得的值进行再设置public void setValue(java.lang.String newValue)
+ if (cookie[i].getName().equals("visited")) {
+                    visitedCookie = cookie[i];
+                }
+
+  visitedCookie.setValue(Integer.toString(visited));
+
+设置cookie的有效期
+Cookie cookie = new Cookie("visited", "1");
+cookie.setMaxAge(3600);秒
+括号中的变量设置为负数时，有效期为浏览器关闭
+
+第7章session
+为每个客户端创建一个会话，当该会话启动时，用于标识该会话的会话ID存储在客户端上，要存储的值作为会话变量存储在服务器端。
+客户端上存储的会话ID是使用cookie存储的。
+“ getSession”方法将已启动的会话返回给请求Servlet的客户端。 如果将“ ture”指定为参数，则如果会话尚未启动，则在启动新会话后返回该会话。
+如果在参数中指定“ false”，则如果没有会话，则返回null。
+PrintWriter out = response.getWriter();
+        HttpSession session = request.getSession(false);
+
+使用会话写入和读取数据，保存在服务端的数据被作为session的对象使用，一个session可以有多个对象
+保存数据的方法
+public void setAttribute(java.lang.String name,
+                         java.lang.Object value)
+value作为对象，类型为class，可以用大部分的数据类型，但是不可以用int的基本类型
+HttpSession session = request.getSession(true);
+  session.setAttribute("visited", "1");
+读取已经保存的数据，以下方法返回该名字的对应的值
+public java.lang.Object getAttribute(java.lang.String name)
+
+删除session对象
+HttpSession session = request.getSession(true);
+  session.removeAttribute("visited");
+
+销毁session
+ HttpSession session = request.getSession(true);
+  session.invalidate();
+
+获取session生成的时间
+HttpSession session = request.getSession(true);
+  long createTime = session.getCreationTime();
+  Date createDate = new Date(createTime)
+;
+获取最后访问的时间，同上
+public long getLastAccessedTime()
+
+获取session的有效期
+public int getMaxInactiveInterval()
+
+设置session的有效期
+在xml文件里设置
+<web-app>
+<session-config>
+<session-timeout>
+有効期限の分数
+</session-timeout>
+</session-config>
+</web-app>
+或者利用下面的函数
+public void setMaxInactiveInterval(int interval)	
+
+获取session id  public java.lang.String getId()
+
+当没有cookie时，想获取sessionid使用以下方法获取下列的地址的sessionid
+通过URL重写来实现session对象的唯一性
+encodeURL()是本应用级别的，encodeRedirectURL()是跨应用的。  
+response.sendRedirect(response.encodeRedirectURL(***))
+http://localhost:8080/session/sessiontest;jsessionid=(セッションID)
+public java.lang.String encodeURL(java.lang.String url)
+
+
+ String url = "SessionTest5";
+        String eURL = response.encodeURL(url);
+但是如果是有cookie的情况下该方法无法获取到id，除了第一次时。
+
+
+判断sessionid是从哪里获取的
+public boolean isRequestedSessionIdFromCookie()
+public boolean isRequestedSessionIdFromURL()
+cookie禁用时，第一次刷新，isRequestedSessionIdFromCookie()变成false，url仍未false
+但是id的显示在第一次刷新时就变成url，第二次就变成固定的id
+
+第8章  servlet间的相互作用
+servlet A调用servlet B，使用以下方式
+先创建dispatch对象，再利用dispatch的include方法
+String disp = "/IncludeTest";  IncludeTest为servlet B的名字
+    RequestDispatcher dispatch = request.getRequestDispatcher(disp);
+    dispatch.include(request, response);  request, response的值为servlet A传入的值
+
+dispatch的forward方法 servlet A跳转到servlet B，从servlet b出力
+
+
+在servlet A 中设置属性和值，与请求一起转发至servlet B
+public void setAttribute(java.lang.String name, java.lang.Object o)
+request.setAttribute("Hantei", "Out");
+利用属性名，取得值
+public java.lang.Object getAttribute(java.lang.String name)
+
+
+redirect　重定向，类似转发。向客户端指示重定向地址，还可跨server重定向。在servlet.java页面添加servlet或者html的页面地址
+
+public void sendRedirect(java.lang.String location)
+                  throws java.io.IOException
+
+String url = "/dispatch/redirecttest";
+  response.sendRedirect(url);
+
+
+第9章与数据库接续
+链接执行之前先
+WebContent/WEB-INF/libにmysql-connector-java-8.0.18.jarを追加します。
+在ビルドパス先删除WebAppライブラリー，再追加当前的ライブラリー
+public static Connection getConnection(String url,
+                                       String user,
+                                       String password)
+                                throws SQLException
+
+
+Connection conn = null;
+        String url = "jdbc:mysql://localhost:3306/companydata?serverTimezone=JST";
+        String user = "root";
+        String password = "root";
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            out.println("ドライバのロードに成功しました<br>");
+            conn = DriverManager.getConnection(url, user, password);
+            out.println("データベース接続に成功しました<br>");
+        } catch (ClassNotFoundException e) {
+            out.println("ClassNotFoundException:" + e.getMessage());
+        } catch (SQLException e) {
+            out.println("SQLException:" + e.getMessage());
+        } catch (Exception e) {
+            out.println("Exception:" + e.getMessage());
+        } finally {
+            try {
+                if (conn != null) {
+                    conn.close();
+                    out.println("データベース切断に成功しました");
+                } else {
+                    out.println("コネクションがありません");
+                }
+            } catch (SQLException e) {
+                out.println("SQLException:" + e.getMessage());
+            }
+        }
+
+第10章 过滤器Filter，可以做一些验证，log打印，以及逻辑增加等等
+在请求和应答执行之前被执行
+
+init(javax.servlet.FilterConfig)首次使用过滤器使用，初始化
+dofilter类型与doget/dopost
+在调用要过滤的资源时执行。 “ FilterChain”用于执行作为下一个过滤器或请求的目标的JSP页面或servlet的处理
+doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
+destroy()销毁对象
+
+public void doFilter(ServletRequest request, ServletResponse response,
+    FilterChain chain){
+    try{
+      /* フィルタで行う処理 */
+    }catch (ServletException se){
+    }catch (IOException e){
+    }
+  }
+  public void init(FilterConfig filterConfig){
+  }
+  public void destroy(){
+  }
+

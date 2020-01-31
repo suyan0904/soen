@@ -1,0 +1,110 @@
+﻿google mail suyan09041007 sy1061425281
+itjob       suyan0904     sy1061
+
+
+Name 属性
+如果要正确地被提交，每个输入字段必须设置一个 name 属性。
+
+本例只会提交 "Last name" 输入字段：
+
+
+margin
+
+let局部变量，初期値为undefined，使用之前必须先声明
+布尔逻辑值，所有非0，undefined，null的结果是true
+
+与的优先级比"或"高
+
+Js定义对象：var 对象名 ＝｛key1:value1,key2:value2...｝
+ｊｓ调用对象， var 对象。键值
+对象b想要使用对象a的方法x时，使用以下语句
+对象a。方法x名　or　キー名。call（对象b）；
+math.ceil：向上取整，floor向下取整，round四舍五入
+数组追加元素时，利用push方法，追加的元素会自动被分配索引
+数组的分隔符用数组名。join方法的参数来定义数组分隔符
+
+获取表单中文本框的值document.form名.input标签文本框名.value
+获取表单中复选框的值document.form名.复选框名.checked   一个复选框
+获取表单中多复选框按钮的值document.form名.elements[i].checked  数组形式
+获取表单中单选按钮的值document.form名.单选按钮名.value/。checked document可省略
+获取表单中下拉选择框的值document.form名.select名.value document可省略
+给某元素定义成非生效状态 <input type="button" value="送信" name="btn" disabled>
+获取该元素并定义生效状态 document名.form名.要素名.disabled ＝　true置灰状态　false生效状态
+光标定位document名.form名.要素名.focus() 光标失焦document名.form名.要素名. blur()
+
+js修改css属性
+对象.style.属性fontsize  ＝
+利用js追加add，删除remove，切换toggle css的class 
+对象.classList.动作add（"class名”）
+
+
+jquery语句
+$(selector)アクション()
+$(document).ready()；
+
+on()语法，向对象添加一个以上的处理动作
+$(document).ready(function(){
+  $("p").on("click", function(){
+    $(this).hide();
+  });
+});
+$(document).ready(function(){
+  $("p").on({
+    mouseenter: function(){
+      $(this).css("background-color", "lightgray");
+    },  
+    mouseleave: function(){
+      $(this).css("background-color", "lightblue");
+    }, 
+    click: function(){
+      $(this).css("background-color", "yellow");
+    }  
+  });
+});
+
+
+$(selector).stop(stopAll,goToEnd);$(selector).stop(停止所有队列，将正在执行的动画跳转到当前动画的末尾该参数只能在设置了stopAll参数时使用);
+$(selector).stop();默认情况下，stop()函数只会停止当前正在运行的动画。跳入队列2
+1、点击按钮（stop()），由于两个参数都是false。所以点击发生时，animater没有跳到当前动画（动画1）的最终效果，而直接进入动画2，然后动画3，4，5.直至完成整个动画。
+2、点击按钮（stop(true)），由于第一个是true，第二个是false，所以animater立刻全部停止了，动画不动了。
+3、点击按钮（stop(false,true)），由于第一个是false，第二个是true，所以点击发生时，animater身处的当前动画（动画1）停止并且animater直接跳到当前动画（动画1）的最终末尾效果位置，接着正常执行下面的动画（动画2，3，4，5），直至完成整个动画。
+3、点击按钮（stop(true，true)），由于两个都是true，所以点击发生时，animater跳到当前动画（动画1）的最终末尾效果位置，然后，全部动画停止。
+
+callback函数为了防止在使用effect时，effect效果还未显示完了时就去执行下一个code
+使用链可以让您在单个语句中执行多个jQuery方法（针对同一元素）
+$(document).ready(function(){
+  $("button").click(function(){
+    $("#p1").css("color", "red").slideUp(2000).slideDown(2000);
+  });
+});
+
+text（callback函数），使用该函数有两个参数，当前元素的下标，当前元素原值，执行后可返回显示原值，新值，下标
+$(document).ready(function(){
+  $("#btn1").click(function(){
+    $("#test1").text(function(i, origText){
+      return "Old text: " + origText + " New text: Hello world! (index: " + i + ")"; 
+    });
+  });
+
+java
+//数値を読み取る;int num = scan.nextInt();。String num = scanner.next();の場合、文字を読み取る;
+
+トラバース、トラヴァース (traverse, travers)遍历
+
+
+string1.compareto(string2)1>2显示正数，1<2,显示负数，相等显示0
+
+String→Date
+（１）parseメソッドを用いた変換
+public class JSample8_5 {
+    public static void main(String[] args) throws ParseException {
+        String strDate = "2018-12-31";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = dateFormat.parse(strDate);
+        System.out.println(date); // => Mon Dec 31 00:00:00 JST 2018
+    }
+}
+
+
+
+

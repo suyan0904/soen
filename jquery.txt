@@ -1,0 +1,239 @@
+cdn
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<head>
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+</head>
+
+jQueryの構文语句格式
+$(document).ready(function(){});function 可省略
+点击相应的位置，该部分被隐藏
+$(document).ready(function(){
+  $("p").click(function(){
+    $(this).hide();
+  });
+});
+鼠标移动进入相应的部分                    等于mouseenter+mouseleave
+$("#p1").mouseenter(function()      hover()
+鼠标移开时触发     鼠标点击触发，左右键都可   鼠标释放时触发，左右键都可
+mouseleave()   mousedown()          mouseup()
+
+光标聚焦                              光标失焦
+ $("input").focus(function()        $("input").blur(function()
+on（）一次性触发多事件，方法间用，隔开
+$(document).ready(function(){
+  $("p").on({
+    mouseenter: function(){
+      $(this).css("background-color", "lightgray");
+    },  
+    mouseleave: function(){
+      $(this).css("background-color", "lightblue");
+    }, 
+    click: function(){
+      $(this).css("background-color", "yellow");
+    }  
+  });
+});
+
+
+隐藏相应的选择器，括号中可以填入"slow"、 "fast"，或者1000具体时间。显示相应的选择器
+$(selector).hide(speed,callback); $(selector).show(speed,callback);
+来回切换显示状态，相当于hide和show的组合
+$(selector).toggle(speed,callback);
+
+本来隐藏，被触发后向下滑动显示
+$(selector).slideDown(speed,callback);
+本来显示，触发后向上滑动不显示
+ $("#flip").click(function(){
+    $("#panel").slideUp("slow");
+  });
+显示与不显示之间切换
+$(selector).slideToggle(speed,callback);
+第7章
+淡入，图案变的清晰显示
+$(selector).fadeIn(speed,callback);
+淡出图案慢慢不见
+$(selector).fadeOut(speed,callback);
+淡入淡出切换显示
+$(selector).fadeToggle(speed,callback);
+图案淡入淡出到指定的透明度
+$(selector).fadeTo(speed,opacity,callback);
+
+
+第8章
+$(selector).stop(stopAll,goToEnd);$(selector).stop(停止所有队列，将正在执行的动画跳转到当前动画的末尾该参数只能在设置了stopAll参数时使用);
+$(selector).stop();默认情况下，stop()函数只会停止当前正在运行的动画。跳入队列2
+1、点击按钮（stop()），由于两个参数都是false。所以点击发生时，animater没有跳到当前动画（动画1）的最终效果，而直接进入动画2，然后动画3，4，5.直至完成整个动画。
+2、点击按钮（stop(true)），由于第一个是true，第二个是false，所以animater立刻全部停止了，动画不动了。
+3、点击按钮（stop(false,true)），由于第一个是false，第二个是true，所以点击发生时，animater身处的当前动画（动画1）停止并且animater直接跳到当前动画（动画1）的最终末尾效果位置，接着正常执行下面的动画（动画2，3，4，5），直至完成整个动画。
+3、点击按钮（stop(true，true)），由于两个都是true，所以点击发生时，animater跳到当前动画（动画1）的最终末尾效果位置，然后，全部动画停止。
+$(selector).stop(stopAll,goToEnd);
+
+
+第9张回调函数、回调函数是为了防止效果还未完全显示完全时就去执行下面的代码而产生的
+$(selector).hide(speed,callback);
+
+第10章  链式
+相同的要素在同一个语句，可链式动作
+$(document).ready(function(){
+  $("button").click(function(){
+    $("#p1").css("color", "red").slideUp(2000).slideDown(2000);
+  });
+第11章取得内容和属性
+alert("Text: " + $("#test").text());取得相应id、的文本内容
+$("#test").html()  取得相应id的文本内容以及html标签
+val()     返回表单字段值
+
+第12章 设置内容和属性
+val()$("#test1").text("Hello world!"); 该页面显示的文字变成hello world
+ $("#test2").html("<b>Hello world!</b>");页面文字效果变成粗体
+$("#test3").val("Dolly Duck");设置文本框的内容为dolly duck
+
+回调函数 $("#test1").text(function(i, origText)，i表示当前索引，origText表示原来的值，在return中可设置返回新值
+$("#test2").html(function(i, origText){
+      return "Old html: " + origText + " New html: Hello <b>world!</b> (index: " + i + ")"; 
+
+
+第13章 追加要素方法
+append()， $("p").append(" <b>Appended text</b>.");在选择的要素内的末尾追加语句
+prepend()在选择的要素外的末尾追加语句
+after()before() 在选择的要素外的前端追加语句
+
+
+第14章 删除要素
+remove() 删除选择的要素以及子要素$("#div1").remove();
+empty() 删除选择要素的子要素，例如清空框中的内容
+
+
+第15章 css的取得和设定
+1，先写好html，以及style的class，通过script的jQuery方法为相应的元素添加class
+ $("h1, h2, p").addClass("blue");
+removeClass()删除css的class  toggleClass()切换显示css的class的添加与删除
+css() - css style的设定与返回
+
+
+第16章
+alert("background-color = " + $("p").css("background-color"));
+css("属性名");页面返回该属性值
+$("p").css({"background-color": "yellow", "font-size": "200%"});css属性设定
+
+第17章 尺寸
+txt += "Width of div: " + $("#div1").width() 返回该id的宽度
+$("#div1").height();返回该id的高度  $("#div1").html(txt);显示在页面上
+
+第19章 遍历文档流父辈
+$("span").parent().css({"color": "red", "border": "2px solid red"});
+parent针对当前元素的上一级父辈
+$("span").parents().css({"color": "red", "border": "2px solid red"});
+parents针对当前元素的所有父辈
+ $("span").parents("ul").css({"color": "red", "border": "2px solid red"});
+parents("ul")针对当前元素指定的父辈ul
+
+ $("span").parentsUntil("div").css({"color": "red", "border": "2px solid red"});
+("span").parentsUntil("div")针对指定的元素之间的父辈元素
+
+注意.ancestors * { 
+  display: block;
+  border: 2px solid lightgrey;
+  color: lightgrey;
+  padding: 5px;
+  margin: 15px;
+}该css class名后加*表示作用于使用该class元素的子元素，不包括根节点
+
+第20章 遍历文档流子辈
+$("div").children().css({"color": "red", "border": "2px solid red"});
+作用于当前元素的下一级子辈
+ $("div").children("p.first").css({"color": "red", "border": "2px solid red"});
+作用于指定子元素的第一个子元素
+ $("div").find("span").css({"color": "red", "border": "2px solid red"});
+作用于所有span元素
+$("div").find("*").css({"color": "red", "border": "2px solid red"});
+作用于div所有子元素
+
+第21章 遍历文档流兄弟
+<style>
+.siblings * { 
+
+ $("h2").siblings().css({"color": "red", "border": "2px solid red"});
+作用于和h2的所有兄弟辈
+  $("h2").siblings("p").css({"color": "red", "border": "2px solid red"});
+作用于指定h2的兄弟辈p
+$("h2").next().css({"color": "red", "border": "2px solid red"});
+作用于当前元素的下一个兄弟元素
+$("h2").nextAll().css({"color": "red", "border": "2px solid red"});
+作用于当前元素的之后的所有的兄弟元素
+$("h2").nextUntil("h6").css({"color": "red", "border": "2px solid red"});
+作用于当前元素与指定元素之间的所有的兄弟元素，不包括h6
+prev()、prevAll()、およびprevUntil()方法与next相反，返回之前的兄弟元素
+
+第22章过滤
+$("div").first().css("background-color", "yellow");
+作用于当前元素的第一个元素
+ $("div").last().css("background-color", "yellow");
+作用于当前所指元素的最后一个元素
+ $("p").eq(1).css("background-color", "yellow");
+作用于当前所指元素的对应的索引的对象
+$("p").filter(".intro").css("background-color", "yellow");
+过滤出当前所指元素中带有class=intro的对象，赋予该css
+ $("p").not(".intro").css("background-color", "yellow");
+过滤出当前所指元素中不带有class=intro的对象，赋予该css
+
+
+第24章 从server上读取数据并返回至所选要素
+$(selector).load(URL,data,callback);指定的URL，指定的查询数据，回调函数
+在server做sample文件
+ 本地触发 $("button").click(function(){
+    $("#div1").load("demo_test.txt");
+
+
+第25章 get（）和post（）请求,
+1先上传HTML和asp文件到server（利用fttp），在复制地址去浏览器执行
+
+$.get(URL,callback);
+$.get("demo_test.asp", function(data, status){
+      alert("Data: " + data + "\nStatus: " + status);
+
+
+$.post(URL,data,callback);
+ $("button").click(function(){
+    $.post("demo_test_post.asp",
+    {
+      name: "Donald Duck",
+      city: "Duckburg"
+    },
+    function(data,status){
+      alert("Data: " + data + "\nStatus: " + status);
+    });
+  });
+});
+
+第26章  noConflict()解决代码在不同框架下使用会冲突
+原来的$用jQuery来代替
+
+$.noConflict();
+jQuery(document).ready(function(){
+  jQuery("button").click(function(){
+    jQuery("p").text("jQuery is still working!");
+  });
+});
+
+
+第27章 筛选器
+document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+上述代码，在搜索框中输入文字实时搜索，大小写不敏感  不明白该段代码
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myList li").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });              li的内容转成小写与输入的value比较，匹配到值就会大于-1
+  });
+});

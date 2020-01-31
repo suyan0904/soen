@@ -1,0 +1,4 @@
+用cmd执行java，
+
+找到.java文件本目录 javac -encoding UTF-8 文件名.java →.class文件
+回到该文件的src目录执行java 工程名.class名

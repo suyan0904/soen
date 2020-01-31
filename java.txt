@@ -1,0 +1,264 @@
+第9章
+构造函数必须与类同名，且在实例化时能够访问。如果是私有属性时。实例化无法访问时实例化需采用另外的方法。
+
+第10章
+カプセル化 封装形式
+private 私有属性，同一个类才能访问，其他类通过setterメソッド とgetter方法操作，通过以下代码另外的共有类访问该私有属性name
+class Person {
+  private String name; // private = restricted access
+  // Getter
+  public String getName() {
+    return name;
+  }
+  // Setter
+  public void setName(String newName) {
+    this.name = newName;
+  }
+}
+
+并且其他类可通过set和get方法来实时更新name值
+public static void main(String[] args) {
+		person myObj = new person();
+		myObj.setName("John");
+		System.out.println(myObj.getName())
+
+第13章 成员变量，成员方法
+
+同一个类中，调用方法，方法名（）；不同类调用方法，对象.方法名（）；
+当在该方法中执行return语句时，可以将处理转移到调用方，而无需执行后续处理。
+实例化时需要进行初期化，此时可使用构造函数
+
+在一个类中声明多个构造函数，构造函数名相同与类名
+1通过修改参数类型和参数数量。调用哪个构造函数取决于调用者的参数类型和参数数量。
+
+第12章  java修饰符
+
+成员变量访问修饰符 transient表示不应序列化的成员变量。
+volatile防止编译器对成员变量执行某些优化。
+方法修饰符
+如果使用final，则该方法不能被子类覆盖，继承
+synchronized当同时运行多个线程时，可以为同一数据调用多个方法。 在这种情况下，请使用同步来安全地执行该方法。
+
+下表显示了指定哪个访问修饰符时可以引用的范围。
+
+アクセス修飾子	同一クラス	同一パッケージ	サブクラス	すべて
+public	        ○	○	         ○	○
+protected	○	○	         ○	×
+指定無し（デフォルト）	○	○	         ×	×
+private	        ○	×	         ×	×
+
+
+静态变量又叫类变量，在实例之间共享值，所以最后输出值为最后的赋值的值，对象1.静态变量=对象2.静态变量=静态变量类名.静态变量
+
+
+第13章继承 子类可以使用父类的属性和方法。不支持多继承但是支持多重继承。子类会自动调用父类的构造函数，当父类有参数时，如果不用的super（参数）；来调用的话，会自动调用无参构造函数
+ss 親クラス名 {
+    処理...
+}
+class 子クラス名 extends 親クラス名 {
+    処理...
+}
+
+
+super关键字：我们可以通过super关键字来实现对父类成员的访问，用来引用当前对象的父类。
+
+this关键字：指向自己的引用。
+
+final 关键字声明类可以把类定义为不能继承的，即最终类；或者用于修饰方法，该方法不能被子类重写：
+
+第14章  多态，一个父类，多个子类表现形式不同，重写父类方法。  父类 对象名 = new 子类（）；
+对象名.变量名=；编译和运行的都是父类的
+对象名.方法名=；编译的是父类的，运行的是子类的。此时想要使用子类中独有的方法，需要向下转型，向下转型时为了避免出现类异常，增加健壮性需使用instanceof
+if (a对象 instanceof Cat子类名) {
+			Cat c = (Cat)a;
+
+子类与父类使用共同的变量和方法，子类可以调用父类所有的变量和方法
+
+方法重载：方法名相同，参数的个数或类型，参数顺序不同，算不同的方法
+
+接口：声明interface インターフェース名{}。接口使用：class クラス名 implements インターフェース名{}
+接口相当于父类，使用者相当于子类，执行者test。需要分开写三个类。接口中只定义属性和方法，不具体定义方法的动作
+public static void main(String[] args) {
+        ControlBikeIf myBike = new BikeGo();
+接口类名 对象名 = new 使用接口名（）；
+
+
+第15章arraylist 动态数组
+ArrayList<型> 変数名 = new ArrayList<型>();型=类名，例如string ，integer。。。基本数据类型要用包装类
+作成ArrayList类的对象，该对象可拥有以下方法
+
+メソッド	                概要
+add([int index,] E e)	指定位置indexに要素eを挿入（index省略で末尾に挿入）
+clear()	                リストからすべての要素を削除
+contains(Object e)	リストに要素oが含まれているかを判定
+get(Object key)	        index番目の要素を取得
+indexOf(Object e)	要素oが登場する最初のインデックス値を取得
+isEmpty()	        リストが空か判定
+remove(int index｜Object o)	指定の要素を削除
+set(int index, E e)	index番目の要素を設定
+int size()	        リストに含まれる要素の数を取得
+
+
+hashmap
+HashMap<型1,型2> 変数名 = new HashMap<型1,型2>();型1 =key 型2 =value
+
+
+メソッド	概要
+clear()	すべての要素を削除
+containsKey(Object key)	キーkeyがマップに含まれているかを判定
+containsValue(Object value)	値valueがマップに含まれているかを判定
+get(Object key)	キーkeyに対応する値を取得
+isEmpty()	マップが空かを判定
+keySet()	すべてのキーを取得
+put(K key, V value)	指定されたキー／値の組み合わせを追加
+remove(Object key)	指定のキーを削除
+int size()	マップの要素数を取得
+Collection values()	すべての値を取得
+
+
+第16章
+checked异常，编译时发现的异常，
+unchecked异常，执行时发现的异常
+
+catch()括号里的异常类型要写当前异常的上一级才行
+
+
+第17章文件管理
+创建文件类对象
+File オブジェクト名 = new File(ファイル名);
+File file = new File("C:\\Test\\test.txt");
+
+File path = new File(".");  表示当前目录。
+
+File path = new File("E:\\Java"); 表示Windows下的E盘里的Java文件（或者是文件夹），注意要用双斜线\\。
+
+File path = new File(new File("."),"bin"); 表示当前文件夹下的bin文件（文件夹），如果没有bin就会抛出NullPointerException异常。
+
+list()方法 ： 会返回一个字符数组，将制定路径下的文件或文件夹名字存储到String数组中。因为其返回的是一个String类型的数组，所以它也就只是一个名字而已（后面要讲到的listFiles()及其重载方法则不同，它们返回的是File类型的对象，所以具有其全部的属性和方法）。
+listfile()方法利用时，存储数组的类型应为file，此时该数组可调用属于file类的方法，数组【i】打印出路径+文件（夹）名，如果是数组【i】。getname（）只答应文件（夹）名
+
+
+list(FilenameFilter filter)方法  ---------调用了-------> filter对象中的accept(File dir, String name)方法 ------> FilenameFilter是一个接口。
+
+accept()方法会返回一个boolean类型的值，list()方法会根据这个返回值来决定是不是要将某个名字添加到返回列表中。所以，我们要在accept()方法中定义好挑选条件，由于是字符的选取，这会用到正则表达式。
+System.out.println("------挑选当前目录下以s开头的文件或文件夹-------");
+		//3、将匿名内部类利用到极致
+		File path3 = new File(".");
+		String[] nameList3 = path3.list(new FilenameFilter(){//其实是在第二种方式的基础上精简过来的。
+			private Pattern pattern = Pattern.compile("s.*");
+			@Override
+			public boolean accept(File dir, String name) {
+				return pattern.matcher(name).matches();
+			}
+		});
+		for(String itemName : nameList3){
+			System.out.println(itemName);
+		}
+
+
+filelist[i].isFile()判断是否为文件
+filelist[i].isDirectory()判断是否为文件夹
+获取绝对路径file.getAbsolutePath();
+在“ C：\ Test”目录中准备一个名为“ test.txt”的文件。 并将Java示例程序安装在同一目录中，从相对路径指定的“ test.txt”中创建File类的对象，并在绝对路径中获取位置和名称。
+public class JSample17_3{
+    public static void main(String args[]){
+        File file = new File("test.txt");
+        String path = file.getAbsolutePath();
+    System.out.println("File：" + path);
+    }
+
+新建文件createNewFile()，该方法会在相应的路径下新建文件，返回值为布尔型
+ File newfile = new File("C:\\Test\\newtest.txt");
+        try {
+            if (newfile.createNewFile()) {
+                System.out.println("ファイルの作成に成功しました");
+            } else {
+                System.out.println("ファイルの作成に失敗しました");
+            }
+        } catch (IOException e) {
+            System.out.println(e);
+
+新建文件夹sub该方法会在相应的路径下新建文件夹，返回值为布尔型
+File newdir = new File("D:\\tool\\pleiades\\workspace\\MyClass\\src\\JSample\\sub");
+
+		if (newdir.mkdir()) {
+			System.out.println("ディレクトリの作成に成功しました");
+		} else {
+			System.out.println("ディレクトリの作成に失敗しました");
+		}
+
+
+判断文件是否存在file.exists()
+ if (file.exists()) {
+        } else {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                // TODO 自動生成された catch ブロック
+                e.printStackTrace();
+            }
+        }
+删除文件file.delete()返回布尔值
+
+读写权限的设置
+private static void canReadWrite(File file) {
+        if (file.canRead()) {
+            System.out.println("ファイルは読み込み可能です");
+        }
+        if (file.canWrite()) {
+            System.out.println("ファイルは書き込み可能です");
+        }
+只读模式
+if (file.setReadOnly()) {
+            System.out.println("ファイルを読み取り専用にしました");
+        } else {
+            System.out.println("読み取り専用に変更が失敗しました");
+        }
+
+
+第18章 文件读取前篇
+filereader
+ File file = new File("c:¥¥tmp¥¥test.txt");
+  FileReader filereader = new FileReader(file);
+
+ int ch = filereader.read();从文章开始处，使用一次该方法，读取一个文字。到文章末尾时返回-1值
+
+关闭文件fr.close();
+
+文件批量读取
+File file = new File(file_name);
+FileReader filereader = new FileReader(file);
+BufferedReader br = new BufferedReader(filereader);
+
+br.readLine(); 一次读取一行文本，从文件开始位置
+
+
+第18章文件写入
+try {
+            File file = new File("C:\\Test\\writetest.txt");
+            if (fileFile(file)) {
+                System.out.println("ファイルは存在し、読み込み可能です。");
+                FileWriter fw = new FileWriter(file);
+                fw.write("おはようございます！\r\n");
+                fw.write("初めまして、\r\n");
+                fw.close();
+
+向原有的文件的末尾追加内容
+FileWriter　filewriter = new FileWriter(file, true);第二个参数设为true
+
+
+标准输入，即从键盘输入，再显示 InputStreamReader isr = new InputStreamReader(System.in);
+public static void main(String[] args) {
+        InputStreamReader isr = new InputStreamReader(System.in);
+        BufferedReader br = new BufferedReader(isr);
+        System.out.println("キーボードから入力してください");
+        String str = null;
+        try {
+            str = br.readLine();
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("入力された文字は「" + str + "」です");
+
+也可使用scanner的方法显示从键盘输入值
